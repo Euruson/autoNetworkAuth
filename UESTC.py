@@ -30,6 +30,7 @@ def ping():
 
 def reconnect(username, password):
     chrome_options = Options()
+    chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-gpu")
     if platform.system() == "Windows":
@@ -109,6 +110,6 @@ if __name__ == "__main__":
             password = configs["password"]
     while True:
         if ping() == 0:
-            time.sleep(10)
+            time.sleep(300)
         else:
             reconnect(username, password)
