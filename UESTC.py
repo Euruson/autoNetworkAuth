@@ -1,29 +1,16 @@
-import logging, logging.handlers
+import argparse
+import json
+import logging
+import logging.handlers
 import os
 import platform
 import subprocess
 import time
-import argparse
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    handlers=[
-        logging.handlers.TimedRotatingFileHandler(
-            os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "autoNetworkAuth.log")
-            ),
-            when="midnight",
-            backupCount=3,
-        )
-    ],
-)
-ping_logger = logging.getLogger("ping")
-reconnect_logger = logging.getLogger("reconnect")
+dir_path = os.path.abspath(os.path.dirname(__file__))
 
 
 def ping():
@@ -69,17 +56,59 @@ def reconnect(username, password):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Automate network authentication for UESTC"
+        description="Automated network authentication for UESTC"
     )
-    parser.add_argument(
+    subparsers = parser.add_subparsers(
+        help="Get username and password from command line or config file", dest="method"
+    )
+
+    parser_a = subparsers.add_parser(
+        "cli", help="Get username and password from command line"
+    )
+    parser_a.add_argument(
         "-u", "--username", type=str, required=True, help="Username to log in"
     )
-    parser.add_argument(
+    parser_a.add_argument(
         "-p", "--password", type=str, required=True, help="Password corresponding"
     )
+
+    parser_b = subparsers.add_parser(
+        "config", help="Get username and password from config file"
+    )
+    parser_b.add_argument(
+        "-p",
+        "--path",
+        type=str,
+        default=os.path.join(dir_path, "config.json"),
+        help="The path of config file",
+    )
     args = parser.parse_args()
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        handlers=[
+            logging.handlers.TimedRotatingFileHandler(
+                os.path.join(dir_path, "autoNetworkAuth.log"),
+                when="midnight",
+                backupCount=3,
+            )
+        ],
+    )
+    ping_logger = logging.getLogger("ping")
+    reconnect_logger = logging.getLogger("reconnect")
+
+    if args.method == "cli":
+        username = args.username
+        password = args.password
+    else:
+        with open(args.path, "r") as f:
+            configs = json.load(f)
+            username = configs["username"]
+            password = configs["password"]
     while True:
         if ping() == 0:
             time.sleep(10)
         else:
-            reconnect(args.username, args.password)
+            reconnect(username, password)
