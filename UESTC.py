@@ -64,7 +64,7 @@ def reconnect(username, password):
         browser.quit()
         reconnect_logger.info("Reconnected to the Internet")
     except Exception:
-        reconnect_logger.error("Failed to reconnect to the Internet")
+        reconnect_logger.error("Failed to reconnect to the Internet", exc_info=True)
 
 
 if __name__ == "__main__":
