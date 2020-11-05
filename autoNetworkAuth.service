@@ -4,7 +4,7 @@ Description=Automated Network Authentication
 [Service]
 User=root
 ExecStart=/usr/bin/python3 /usr/local/autoNetworkAuth/UESTC.py config
-ExecStop=/usr/bin/kill -15 $MAINPID
+ExecStop=/bin/kill -15 $MAINPID
 Restart=on-failure
 
 [Install]
