@@ -1,0 +1,12 @@
+[Unit]
+Description=Automate Network Authentication
+
+[Service]
+User=root
+EnvironmentFile=/usr/local/autoNetworkAuth/config
+ExecStart=python /usr/local/autoNetworkAuth/UESTC.py -u $USERNAME -p $PASSWD > /dev/null 2>&1
+ExecStop=/usr/bin/kill -15  $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
