@@ -4,7 +4,7 @@
 
 Now, `autoNetworkAuth` implements the following functions in UESTC:
 1. Use `selenium` to automatically login to the school network.
-2. Use `ping` to monitor the network status, and call `1` to get reconnected if got offline by the network server.
+2. Use `ping` to monitor the network status, and call `Step 1` to get reconnected if got offline by the network server.
 3. Create a linux's `systemd` service to work automatically.
 
 One should add its own account information in the `config.json` file.
